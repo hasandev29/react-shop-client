@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { popularProducts } from "../data";
+// import { popularProducts } from "../data";
 import Product from "./Product";
 import axios from "axios";
 
@@ -13,20 +13,24 @@ const Container = styled.div`
 
 const Products = ({ cat, filters, sort }) => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  if (!cat) {
+    cat = "products"
+    console.log(cat)
+  }
+  // const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     const getProducts = async () => {
       try {
         const res = await axios.get(
-          cat
-            ? `http://localhost:5000/api/products?category=${cat}`
-            : "http://localhost:5000/api/products"
+          cat === "products"
+            ? "http://localhost:5000/api/products"
+            : `http://localhost:5000/api/products?category=${cat}`
         );
-        if (res.data.message === 'success') {
+        if (res.data.message === "success") {
           setProducts(res.data.data);
         } else {
-          setProducts([])
+          setProducts([]);
         }
       } catch (err) {}
     };
@@ -62,7 +66,11 @@ const Products = ({ cat, filters, sort }) => {
 
   return (
     <Container>
-      {products ? products.map((item) => <Product item={item} key={item._id} /> ) : <Product item={"item"} key={"item.id"} />}
+      {products ? (
+        products.map((item) => <Product item={item} key={item._id} />)
+      ) : (
+        <Product item={"item"} key={"item.id"} />
+      )}
       {/* <Product item={"item"} key={"item.id"} /> */}
     </Container>
     // <Container>

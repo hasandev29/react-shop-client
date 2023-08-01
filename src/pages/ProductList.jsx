@@ -32,6 +32,7 @@ const Select = styled.select`
   padding: 10px;
   margin-right: 20px;
   ${mobile({ margin: "10px 0px" })}
+  text-transform: capitalize;
 `;
 const Option = styled.option`
 text-transform: capitalize;
@@ -53,8 +54,6 @@ const ProductList = () => {
   };
 
   console.log(cat)
-  console.log(filters)
-  console.log(sort)
 
   return (
     <Container>

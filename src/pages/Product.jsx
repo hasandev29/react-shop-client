@@ -1,12 +1,15 @@
 import styled from "styled-components";
 import { mobile } from "../responsive";
 
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+import { AddIconBtn } from "../StyleComps";
+import { RemoveIconBtn } from "../StyleComps";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addProduct } from "../redux/cartRedux";
+
 
 const Api_Key = process.env.Api_Key;
 
@@ -69,6 +72,7 @@ const FilterTitle = styled.span`
 const FilterColor = styled.div`
   width: 20px;
   height: 20px;
+  border: 1px solid black;
   border-radius: 50%;
   background-color: ${(props) => props.color};
   margin: 0px 5px;
@@ -120,6 +124,7 @@ const Button = styled.button`
 `;
 
 export const Product = () => {
+
   const location = useLocation();
   const pdtId = location.pathname.split("/")[2];
 
@@ -128,8 +133,8 @@ export const Product = () => {
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
 
-  console.log("Id ------" + pdtId);
-  console.log("Api Key ------" + Api_Key);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const getProduct = async () => {
       try {
@@ -143,7 +148,6 @@ export const Product = () => {
     };
 
     getProduct();
-    console.log(product);
   }, [pdtId]);
 
   const handleQuantity = (type) => {
@@ -156,14 +160,25 @@ export const Product = () => {
 
   const handleClick = () => {
 
-  }
+    if (!color || !size) {
+      const newColor = !color ? product.color[0] : color;
+      const newSize = !size ? product.size[0] : size;
+
+      dispatch(addProduct({ ...product, quantity, color: newColor, size: newSize }));
+    } else {
+      dispatch(addProduct({ ...product, quantity, color, size }));
+    }
+
+  };
+
+  // if (product) console.log(product);
+  
 
   return (
     <>
       <Container>
         <Wrapper>
           <ImgContainer>
-            {/* <Image src="https://rukminim2.flixcart.com/image/832/832/xif0q/jacket/a/h/i/xl-mnt-7025-montrez-original-imag5hb93udpfs4q-bb.jpeg?q=70" /> */}
             <Image src={product.img} />
           </ImgContainer>
           <InfoContainer>
@@ -175,28 +190,27 @@ export const Product = () => {
               <Filter>
                 <FilterTitle>Color</FilterTitle>
                 {product.color?.map((col) => (
-                  <FilterColor color={col} key={col} onClick={() => setColor(col)} />
+                  <FilterColor
+                    color={col}
+                    key={col}
+                    onClick={() => setColor(col)}
+                  />
                 ))}
               </Filter>
               <Filter>
                 <FilterTitle>Size</FilterTitle>
-                <FilterSize onChange={(e) => setSize(e.target.value)} >
+                <FilterSize onChange={(e) => setSize(e.target.value)}>
                   {product.size?.map((size) => (
-                    <FilterSizeOption key={size} >{size}</FilterSizeOption>
+                    <FilterSizeOption key={size}>{size}</FilterSizeOption>
                   ))}
                 </FilterSize>
-                {/* <FilterSize onChange={(e) => setSize(e.target.value)}>
-                  {product.size?.map((s) => (
-                    <FilterSizeOption key={s}>{s}</FilterSizeOption>
-                  ))}
-                </FilterSize> */}
               </Filter>
             </FilterContainer>
             <AddContainer>
               <AmountContainer>
-                <RemoveIcon onClick={() => handleQuantity("dec")} />
+                <RemoveIconBtn onClick={() => handleQuantity("dec")} />
                 <Amount>{quantity}</Amount>
-                <AddIcon onClick={() => handleQuantity("inc")} />
+                <AddIconBtn onClick={() => handleQuantity("inc")} />
               </AmountContainer>
               <Button onClick={handleClick}>ADD TO CART</Button>
             </AddContainer>

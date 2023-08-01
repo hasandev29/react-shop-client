@@ -6,9 +6,11 @@ import React from "react";
 import styled from "styled-components";
 import { mobile } from "../responsive";
 // import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 
-import { StyledLink } from "../App";
+import { StyledLink } from "../StyleComps";
+import { useDispatch, useSelector } from "react-redux";
+
+import { logout } from "../redux/userSlice";
 
 const Container = styled.div`
   height: 60px;
@@ -73,7 +75,8 @@ const MenuItem = styled.div`
 `;
 
 const Navbar = () => {
-  //   const quantity = useSelector(state=>state.cart.quantity)
+    const dispatch = useDispatch();
+    const quantity = useSelector(state=>state.cart.quantity)
   return (
     <Container>
       <Wrapper>
@@ -96,13 +99,17 @@ const Navbar = () => {
           <StyledLink to="/login">
             <MenuItem>SIGN IN</MenuItem>
           </StyledLink>
-          <Link to="/cart"></Link>
+          <StyledLink >
+            <MenuItem onClick={() => {dispatch(logout())}}>SIGN OUT</MenuItem>
+          </StyledLink>
+          <StyledLink to="/cart">
           <MenuItem>
-            <ShoppingCartIcon />
+            <ShoppingCartIcon />{quantity}
             {/* <Badge badgeContent={quantity} color="primary">
               <ShoppingCartOutlined />
             </Badge> */}
           </MenuItem>
+          </StyledLink>
         </Right>
       </Wrapper>
     </Container>
