@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { mobile } from "../responsive";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { publicRequest } from "../requestMethods";
 import { useRef } from "react";
@@ -67,6 +67,7 @@ const LinkTag = styled(Link)`
 `;
 
 const Register = () => {
+  const navigate = useNavigate();
   const passRef = useRef();
   const conPassRef = useRef();
 
