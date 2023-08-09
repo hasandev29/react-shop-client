@@ -3,15 +3,11 @@ import { mobile } from "../responsive";
 
 import { AddIconBtn } from "../StyleComps";
 import { RemoveIconBtn } from "../StyleComps";
-
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addProduct } from "../redux/cartRedux";
-
-
-const Api_Key = process.env.Api_Key;
+import { publicRequest } from "../requestMethods";
 
 const Container = styled.div``;
 
@@ -124,7 +120,6 @@ const Button = styled.button`
 `;
 
 export const Product = () => {
-
   const location = useLocation();
   const pdtId = location.pathname.split("/")[2];
 
@@ -138,9 +133,7 @@ export const Product = () => {
   useEffect(() => {
     const getProduct = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/products/find/${pdtId}`
-        );
+        const res = await publicRequest.get(`products/find/${pdtId}`);
         setProduct(res.data);
       } catch (error) {
         console.log(error);
@@ -159,20 +152,17 @@ export const Product = () => {
   };
 
   const handleClick = () => {
-
     if (!color || !size) {
       const newColor = !color ? product.color[0] : color;
       const newSize = !size ? product.size[0] : size;
 
-      dispatch(addProduct({ ...product, quantity, color: newColor, size: newSize }));
+      dispatch(
+        addProduct({ ...product, quantity, color: newColor, size: newSize })
+      );
     } else {
       dispatch(addProduct({ ...product, quantity, color, size }));
     }
-
   };
-
-  // if (product) console.log(product);
-  
 
   return (
     <>

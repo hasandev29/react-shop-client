@@ -1,5 +1,9 @@
 import styled from "styled-components";
 import { mobile } from "../responsive";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import { publicRequest } from "../requestMethods";
+import { useRef } from "react";
 
 const Container = styled.div`
   width: 100vw;
@@ -46,7 +50,7 @@ const Agreement = styled.span`
 `;
 
 const Button = styled.button`
-  width: 40%;
+  max-width: 200px;
   border: none;
   padding: 15px 20px;
   background-color: teal;
@@ -54,23 +58,128 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
+const LinkTag = styled(Link)`
+  margin: 5px 0px;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  color: #000;
+`;
+
 const Register = () => {
+  const passRef = useRef();
+  const conPassRef = useRef();
+
+  const [registerData, setRegisterData] = useState({});
+  const [isAdmin, setisAdmin] = useState(false);
+  const [isPassMatched, setIsPassMatched] = useState(true);
+
+  console.log(isAdmin);
+
+  const handleInput = (e) => {
+    setRegisterData({ ...registerData, [e.target.name]: e.target.value });
+    // console.log(e.currentTarget.value);
+  };
+
+  const userImgUrl =
+    "https://assets.myntassets.com/h_1440,q_100,w_1080/v1/assets/images/1155795/2020/5/22/674d592c-8bcf-4e66-a9b4-b254643c8dfe1590137663576-ether-Men-Black-Slim-Fit-Antimicrobial-Cotton-Stretch-Shirt--1.jpg";
+
+  const handleSubmit = async () => {
+    if (passRef.current.value !== conPassRef.current.value) {
+      setIsPassMatched(false);
+    } else {
+      setIsPassMatched(true);
+      let ReqObj = {
+        firstname: registerData.firstname,
+        lastname: registerData.lastname,
+        username: registerData.username,
+        email: registerData.email,
+        password: registerData.password,
+        img: userImgUrl,
+        admin: isAdmin,
+      };
+      try {
+        const register = await publicRequest.post("auth/register", ReqObj);
+        console.log(register);
+        navigate("/login");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <Container>
       <Wrapper>
         <Title>CREATE AN ACCOUNT</Title>
         <Form>
-          <Input placeholder="name" />
-          <Input placeholder="last name" />
-          <Input placeholder="username" />
-          <Input placeholder="email" />
-          <Input placeholder="password" />
-          <Input placeholder="confirm password" />
+          <Input
+            name="firstname"
+            placeholder="First Name"
+            onChange={(e) => handleInput(e)}
+          />
+          <Input
+            name="lastname"
+            placeholder="Last Name"
+            onChange={(e) => handleInput(e)}
+          />
+          <Input
+            name="username"
+            placeholder="Username"
+            onChange={(e) => handleInput(e)}
+          />
+          <Input
+            name="email"
+            placeholder="Email"
+            onChange={(e) => handleInput(e)}
+          />
+          <Input
+            name="password"
+            placeholder="Password"
+            onChange={(e) => handleInput(e)}
+            ref={passRef}
+          />
+          <Input
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            ref={conPassRef}
+          />
+
+          <div className="form-check form-switch mt-3">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="stockSwitch"
+              name="isAdmin"
+              checked={isAdmin}
+              onChange={(e) => setisAdmin(!isAdmin)}
+            />
+            <label className="form-check-label" htmlFor="stockSwitch">
+              Admin
+            </label>
+
+            {!isPassMatched && (
+              <p className="text-danger mb-0 mt-2">
+                Password & Confirm Password is not matching
+              </p>
+            )}
+          </div>
+
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
-          <Button>CREATE</Button>
+
+          <div className="last-row d-flex flex-column">
+            <Button type="button" onClick={handleSubmit}>
+              CREATE
+            </Button>
+
+            <LinkTag className="mt-4" to="/login">
+              ALREADY HAVE AN ACCOUNT ?
+            </LinkTag>
+          </div>
         </Form>
       </Wrapper>
     </Container>

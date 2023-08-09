@@ -1,22 +1,14 @@
-// import {
-//     Facebook,
-//     Instagram,
-//     MailOutline,
-//     Phone,
-//     Pinterest,
-//     Room,
-//     Twitter,
-//   } from "@material-ui/icons";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import PinterestIcon from "@mui/icons-material/Pinterest";
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
-import EmailIcon from '@mui/icons-material/Email';
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
+import EmailIcon from "@mui/icons-material/Email";
 
 import styled from "styled-components";
 import { mobile } from "../responsive";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -40,7 +32,7 @@ const SocialContainer = styled.div`
   display: flex;
 `;
 
-const SocialIcon = styled.div`
+const SocialIcon = styled.a`
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -50,6 +42,7 @@ const SocialIcon = styled.div`
   align-items: center;
   justify-content: center;
   margin-right: 20px;
+  cursor: pointer;
 `;
 
 const Center = styled.div`
@@ -73,6 +66,7 @@ const List = styled.ul`
 const ListItem = styled.li`
   width: 50%;
   margin-bottom: 10px;
+  cursor: pointer;
 `;
 
 const Right = styled.div`
@@ -92,62 +86,80 @@ const Payment = styled.img`
 `;
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <Container>
       <Left>
-        <Logo>LAMA.</Logo>
+        <Logo>HAS.</Logo>
         <Desc>
-          There are many variations of passages of Lorem Ipsum available, but
-          the majority have suffered alteration in some form, by injected
-          humour, or randomised words which don’t look even slightly believable.
+          Explore our online HAS. store for a range of styles, from elegant
+          gowns to casual sundresses. Find your perfect dress effortlessly and
+          embrace the art of dressing up today.
         </Desc>
+
         <SocialContainer>
-          <SocialIcon color="3B5999">
+          <SocialIcon
+            color="3B5999"
+            href="https://www.facebook.com/"
+            target="_blank"
+          >
             <FacebookIcon />
-            {/* <Facebook /> */}
           </SocialIcon>
-          <SocialIcon color="E4405F">
+          <SocialIcon
+            color="E4405F"
+            href="https://www.instagram.com/"
+            target="_blank"
+          >
             <InstagramIcon />
-            {/* <Instagram /> */}
           </SocialIcon>
-          <SocialIcon color="55ACEE">
+          <SocialIcon
+            color="55ACEE"
+            href="https://www.twitter.com"
+            target="_blank"
+          >
             <TwitterIcon />
-            {/* <Twitter /> */}
           </SocialIcon>
-          <SocialIcon color="E60023">
+          <SocialIcon
+            color="E60023"
+            href="https://www.pinterest.com/"
+            target="_blank"
+          >
             <PinterestIcon />
-            {/* <Pinterest /> */}
           </SocialIcon>
         </SocialContainer>
       </Left>
       <Center>
         <Title>Useful Links</Title>
         <List>
-          <ListItem>Home</ListItem>
-          <ListItem>Cart</ListItem>
-          <ListItem>Man Fashion</ListItem>
-          <ListItem>Woman Fashion</ListItem>
-          <ListItem>Accessories</ListItem>
-          <ListItem>My Account</ListItem>
-          <ListItem>Order Tracking</ListItem>
-          <ListItem>Wishlist</ListItem>
-          <ListItem>Wishlist</ListItem>
-          <ListItem>Terms</ListItem>
+          <ListItem onClick={() => navigate("/")}>Home</ListItem>
+          <ListItem onClick={() => navigate("/cart")}>Cart</ListItem>
+          <ListItem onClick={() => navigate("/products/men")}>
+            Man Fashion
+          </ListItem>
+          <ListItem onClick={() => navigate("/products/women")}>
+            Woman Fashion
+          </ListItem>
+          <ListItem onClick={() => navigate("/")}>Accessories</ListItem>
+          <ListItem onClick={() => navigate("/")}>My Account</ListItem>
+          <ListItem onClick={() => navigate("/")}>Order Tracking</ListItem>
+          <ListItem onClick={() => navigate("/")}>Wishlist</ListItem>
+          <ListItem onClick={() => navigate("/")}>Wishlist</ListItem>
+          <ListItem onClick={() => navigate("/")}>Terms</ListItem>
         </List>
       </Center>
       <Right>
         <Title>Contact</Title>
         <ContactItem>
-        <LocationOnIcon /> <span>622 Dixie Path , South Tobinchester 98336</span>
-          {/* <Room style={{marginRight:"10px"}}/> 622 Dixie Path , South Tobinchester 98336 */}
+          <LocationOnIcon />{" "}
+          <span>622 Dixie Path , South Tobinchester 98336</span>
         </ContactItem>
         <ContactItem>
-        <PhoneAndroidIcon /><span>+1 234 56 78</span>
-          {/* <Phone style={{marginRight:"10px"}}/> +1 234 56 78 */}
+          <PhoneAndroidIcon />
+          <span>+91 8344 568 787</span>
         </ContactItem>
         <ContactItem>
-        <EmailIcon /><span>contact@lama.dev</span>
-          {/* <MailOutline style={{marginRight:"10px"}} /> contact@lama.dev */}
+          <EmailIcon />
+          <span className="ms-2">contact@hasstore.com</span>
         </ContactItem>
         <Payment src="https://i.ibb.co/Qfvn4z6/payment.png" />
       </Right>

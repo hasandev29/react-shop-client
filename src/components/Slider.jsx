@@ -1,4 +1,3 @@
-// import { ArrowLeftOutlined, ArrowRightOutlined } from "@material-ui/icons";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 
@@ -95,7 +94,6 @@ const Slider = () => {
   return (
     <Container>
       <Arrow direction="left" onClick={() => handleClick("left")}>
-        {/* <ArrowLeftOutlined /> */}
         <ArrowLeftIcon />
       </Arrow>
       <Wrapper slideIndex={slideIndex}>
@@ -114,7 +112,6 @@ const Slider = () => {
       </Wrapper>
       <Arrow direction="right" onClick={() => handleClick("right")}>
         <ArrowRightIcon />
-        {/* <ArrowRightOutlined /> */}
       </Arrow>
     </Container>
   );

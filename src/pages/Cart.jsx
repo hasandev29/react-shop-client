@@ -1,17 +1,18 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { mobile } from "../responsive";
 import { useEffect, useState } from "react";
-// import { useHistory } from "react-router";
 import { StyledLink } from "../StyleComps";
-import { AddIconBtn } from "../StyleComps";
-import { RemoveIconBtn } from "../StyleComps";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 
 import StripeCheckout from "react-stripe-checkout";
-import { userRequest } from "../requestMethods";
+import { useNavigate } from "react-router-dom";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import { editProduct } from "../redux/cartRedux";
+import Butto from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 const KEY = process.env.REACT_APP_STRIPE;
-console.log("Key ---- " + KEY);
 
 const Container = styled.div``;
 
@@ -172,41 +173,77 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const [stripeToken, setStripeToken] = useState(null);
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const cartEmptyMsg = !cart.products.length;
 
   const onToken = (token) => {
     setStripeToken(token);
   };
 
-  console.log(stripeToken);
+  const dispatch = useDispatch();
+
+  const [removePdt, setRemovePdt] = useState({});
+
+  const removeCartModal = (id, title) => {
+    setRemovePdt({ id: id, title: title });
+    handleShow();
+  };
+
+  const removeCart = (id) => {
+    console.log(id);
+    const filteredCart = cart.products.filter((pdt) => pdt._id !== id);
+
+    let subTotal = 0;
+    const mapCart = filteredCart.map(
+      (cart) => (subTotal += cart.price * cart.quantity)
+    );
+
+    const newCart = {
+      products: filteredCart,
+      quantity: filteredCart.length,
+      total: subTotal,
+    };
+    console.log(newCart);
+    dispatch(editProduct(newCart));
+    console.log(cart);
+    handleClose();
+  };
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const makeRequest = async () => {
       try {
-        const res = await userRequest.post("/checkout/payment", {
-          tokenId: stripeToken.id,
-          amount: 500,
-        });
-        console.log(res);
+        console.log({ stripeToken, ...cart });
+        navigate("/success", { replace: true });
       } catch (error) {}
     };
 
     stripeToken && makeRequest();
   }, [stripeToken]);
 
+  const getCartData = () => {
+    console.log(cart);
+  };
   return (
     <Container>
       <Wrapper>
-        <Title>YOUR BAG</Title>
+        <Title onClick={handleShow}>YOUR BAG</Title>
         <Top>
           <StyledLink to={`/products/products`}>
             <TopButton>CONTINUE SHOPPING</TopButton>
           </StyledLink>
-          <TopTexts>
+          <TopTexts onClick={getCartData}>
             <TopText>Shopping Bag({cart.products.length})</TopText>
             {/* <TopText>Your Wishlist (0)</TopText> */}
           </TopTexts>
-          <TopButton type="filled">CHECKOUT NOW</TopButton>
+          <TopButton type="filled" onClick={() => navigate("/")}>
+            EXPLORE MORE
+          </TopButton>
         </Top>
         <Bottom>
           <Info>
@@ -217,11 +254,10 @@ const Cart = () => {
                 </h3>
               )}
             </CartInfo>
-            {cart.products.map((product) => (
-              <Product>
+            {cart.products.map((product, index) => (
+              <Product key={index.toString()}>
                 <ProductDetail>
                   <Image src={product.img} />
-                  {/* <Image src="https://assets.myntassets.com/h_1440,q_100,w_1080/v1/assets/images/1155795/2020/5/22/674d592c-8bcf-4e66-a9b4-b254643c8dfe1590137663576-ether-Men-Black-Slim-Fit-Antimicrobial-Cotton-Stretch-Shirt--1.jpg" /> */}
                   <Details>
                     <ProductName>
                       <b>Product:</b> {product.title}
@@ -239,9 +275,22 @@ const Cart = () => {
                 </ProductDetail>
                 <PriceDetail>
                   <ProductAmountContainer>
-                    <AddIconBtn />
-                    <ProductAmount>{product.quantity}</ProductAmount>
-                    <RemoveIconBtn />
+                    <button
+                      className="btn btn-outline-danger btn-sm d-flex align-items-center"
+                      onClick={() =>
+                        removeCartModal(product._id, product.title)
+                      }
+                    >
+                      <DeleteOutlinedIcon />
+                      Remove
+                    </button>
+                  </ProductAmountContainer>
+
+                  <ProductAmountContainer>
+                    <ProductAmount className="d-flex align-items-center gap-2">
+                      <ShoppingBagOutlinedIcon />
+                      {product.quantity}
+                    </ProductAmount>
                   </ProductAmountContainer>
                   <ProductPrice>
                     $ {product.quantity * product.price}
@@ -272,20 +321,37 @@ const Cart = () => {
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <StripeCheckout
-              name="Lama Shop"
-              image="https://avatars.githubusercontent.com/u/1486366?v=4"
+              name="Has. Shop"
+              image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnWSxpStO9ibGTJyr9aOdrDRti1GHSXsxsqw&usqp=CAU"
               billingAddress
               shippingAddress
-              description={`Your total is $${cart.total}`}
+              description={`Your total is ${cart.total}`}
               amount={cart.total * 100}
               token={onToken}
               stripeKey={KEY}
             >
-              <Button>CHECKOUT NOW</Button>
+              <Button disabled={!cart.total}>CHECKOUT NOW</Button>
             </StripeCheckout>
           </Summary>
         </Bottom>
       </Wrapper>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Remove Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure! Do you want to remove "{removePdt.title}" from your Cart
+          ?
+        </Modal.Body>
+        <Modal.Footer>
+          <Butto variant="secondary" onClick={handleClose}>
+            Cancel
+          </Butto>
+          <Butto variant="danger" onClick={() => removeCart(removePdt.id)}>
+            Confirm Remove
+          </Butto>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

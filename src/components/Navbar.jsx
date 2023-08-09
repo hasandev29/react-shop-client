@@ -1,11 +1,10 @@
-// import { Badge } from "@material-ui/core";
-// import { Search, ShoppingCartOutlined } from "@material-ui/icons";
+import "../pages/success/success.css";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Badge from "react-bootstrap/Badge";
 
 import React from "react";
 import styled from "styled-components";
 import { mobile } from "../responsive";
-// import { useSelector } from "react-redux";
 
 import { StyledLink } from "../StyleComps";
 import { useDispatch, useSelector } from "react-redux";
@@ -75,40 +74,61 @@ const MenuItem = styled.div`
 `;
 
 const Navbar = () => {
-    const dispatch = useDispatch();
-    const quantity = useSelector(state=>state.cart.quantity)
+  const user = useSelector((state) => state.user.currentUser);
+  const admin = user?.data?.isAdmin;
+
+  const dispatch = useDispatch();
+  const quantity = useSelector((state) => state.cart.quantity);
   return (
     <Container>
       <Wrapper>
         <Left>
           <Language>EN</Language>
-          <SearchContainer>
+          {/* <SearchContainer>
             <Input placeholder="Search" />
-            {/* <Search style={{ color: "gray", fontSize: 16 }} /> */}
-          </SearchContainer>
+            <Search style={{ color: "gray", fontSize: 16 }} /> 
+          </SearchContainer>*/}
         </Left>
         <Center>
           <StyledLink to="/">
-            <Logo>LAMA.</Logo>
+            <Logo>HAS.</Logo>
           </StyledLink>
         </Center>
         <Right>
-          <StyledLink to="/register">
-            <MenuItem>REGISTER</MenuItem>
-          </StyledLink>
-          <StyledLink to="/login">
-            <MenuItem>SIGN IN</MenuItem>
-          </StyledLink>
-          <StyledLink >
-            <MenuItem onClick={() => {dispatch(logout())}}>SIGN OUT</MenuItem>
-          </StyledLink>
+          {!user && (
+            <>
+              <StyledLink to="/register">
+                <MenuItem>REGISTER</MenuItem>
+              </StyledLink>
+              <StyledLink to="/login">
+                <MenuItem>SIGN IN</MenuItem>
+              </StyledLink>
+            </>
+          )}
+
+          {admin && (
+            <StyledLink to="/admin">
+              <MenuItem>MANAGE PRODUCT</MenuItem>
+            </StyledLink>
+          )}
+
+          {!!user && (
+            <StyledLink>
+              <MenuItem
+                onClick={() => {
+                  dispatch(logout());
+                }}
+              >
+                SIGN OUT
+              </MenuItem>
+            </StyledLink>
+          )}
+
           <StyledLink to="/cart">
-          <MenuItem>
-            <ShoppingCartIcon />{quantity}
-            {/* <Badge badgeContent={quantity} color="primary">
-              <ShoppingCartOutlined />
-            </Badge> */}
-          </MenuItem>
+            <MenuItem>
+              <ShoppingCartIcon />
+              <Badge bg="secondary">{quantity}</Badge>
+            </MenuItem>
           </StyledLink>
         </Right>
       </Wrapper>

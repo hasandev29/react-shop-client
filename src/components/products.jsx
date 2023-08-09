@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-// import { popularProducts } from "../data";
 import Product from "./Product";
-import axios from "axios";
+import { publicRequest } from "../requestMethods";
+import LoadingSpinner from "./spinner/LoadingSpinner";
 
 const Container = styled.div`
   padding: 20px;
@@ -12,73 +12,79 @@ const Container = styled.div`
 `;
 
 const Products = ({ cat, filters, sort }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
   if (!cat) {
-    cat = "products"
-    console.log(cat)
+    cat = "products";
   }
-  // const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     const getProducts = async () => {
+      setIsLoading(true);
       try {
-        const res = await axios.get(
-          cat === "products"
-            ? "http://localhost:5000/api/products"
-            : `http://localhost:5000/api/products?category=${cat}`
+        const res = await publicRequest.get(
+          cat === "products" ? `products` : `products?category=${cat}`
         );
         if (res.data.message === "success") {
           setProducts(res.data.data);
+          setIsLoading(false);
         } else {
           setProducts([]);
+          console.log("No Response");
+          // setIsLoading(true);
         }
-      } catch (err) {}
+      } catch (err) {
+        console.log(err);
+      }
     };
     getProducts();
   }, [cat]);
-  console.log(products);
-  // useEffect(() => {
-  //   cat &&
-  //     setFilteredProducts(
-  //       products.filter((item) =>
-  //         Object.entries(filters).every(([key, value]) =>
-  //           item[key].includes(value)
-  //         )
-  //       )
-  //     );
-  // }, [products, cat, filters]);
+  useEffect(() => {
+    const filteredSet = products.reduce((result, item) => {
+      const colorMatch = !filters?.color || item.color.includes(filters?.color);
+      const sizeMatch = !filters?.size || item.size.includes(filters?.size);
 
-  // useEffect(() => {
-  //   if (sort === "newest") {
-  //     setFilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => a.createdAt - b.createdAt)
-  //     );
-  //   } else if (sort === "asc") {
-  //     setFilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => a.price - b.price)
-  //     );
-  //   } else {
-  //     setFilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => b.price - a.price)
-  //     );
-  //   }
-  // }, [sort]);
+      if (colorMatch && sizeMatch) {
+        result.add(item);
+      }
+
+      return result;
+    }, new Set());
+
+    setFilteredProducts([...filteredSet]);
+  }, [products, cat, filters]);
+
+  useEffect(() => {
+    switch (sort) {
+      case "newest":
+        setFilteredProducts((prev) =>
+          [...prev].sort((a, b) => a.createdAt - b.createdAt)
+        );
+        break;
+
+      case "asc":
+        setFilteredProducts((prev) =>
+          [...prev].sort((a, b) => a.price - b.price)
+        );
+        break;
+
+      case "desc":
+        setFilteredProducts((prev) =>
+          [...prev].sort((a, b) => b.price - a.price)
+        );
+      default:
+        break;
+    }
+  }, [sort]);
 
   return (
     <Container>
-      {products ? (
-        products.map((item) => <Product item={item} key={item._id} />)
-      ) : (
-        <Product item={"item"} key={"item.id"} />
-      )}
-      {/* <Product item={"item"} key={"item.id"} /> */}
+      {isLoading && <LoadingSpinner />}
+      {filteredProducts.length
+        ? filteredProducts.map((item) => <Product item={item} key={item._id} />)
+        : products?.map((item) => <Product item={item} key={item._id} />)}
     </Container>
-    // <Container>
-    //   {cat
-    //     ? filteredProducts.map((item) => <Product item={item} key={item.id} />)
-    //     : products?.slice(0, 8)
-    //         .map((item) => <Product item={item} key={item.id} />)}
-    // </Container>
   );
 };
 

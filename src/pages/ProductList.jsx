@@ -35,7 +35,7 @@ const Select = styled.select`
   text-transform: capitalize;
 `;
 const Option = styled.option`
-text-transform: capitalize;
+  text-transform: capitalize;
 `;
 
 const ProductList = () => {
@@ -43,6 +43,7 @@ const ProductList = () => {
   const cat = location.pathname.split("/")[2];
 
   const [filters, setFilters] = useState({});
+
   const [sort, setSort] = useState("newest");
 
   const handleFilters = (e) => {
@@ -53,7 +54,7 @@ const ProductList = () => {
     });
   };
 
-  console.log(cat)
+  console.log(cat);
 
   return (
     <Container>
@@ -61,22 +62,25 @@ const ProductList = () => {
       <FilterContainer>
         <Filter>
           <FilterText>Filter Products:</FilterText>
-          <Select name="color" onChange={handleFilters}>
+          <Select name="color" onChange={(e) => handleFilters(e)}>
             <Option disabled>Color</Option>
-            <Option>white</Option>
-            <Option>black</Option>
-            <Option>red</Option>
-            <Option>blue</Option>
-            <Option>yellow</Option>
-            <Option>green</Option>
+            <Option value="">ALL</Option>
+            <Option value="white">white</Option>
+            <Option value="black">black</Option>
+            <Option value="red">red</Option>
+            <Option value="blue">blue</Option>
+            <Option value="yellow">yellow</Option>
+            <Option value="green">green</Option>
           </Select>
-          <Select name="size" onChange={handleFilters}>
+          <Select name="size" onChange={(e) => handleFilters(e)}>
             <Option disabled>Size</Option>
-            <Option>XS</Option>
-            <Option>S</Option>
-            <Option>M</Option>
-            <Option>L</Option>
-            <Option>XL</Option>
+            <Option value="">ALL</Option>
+            <Option value="XS">XS</Option>
+            <Option value="S">S</Option>
+            <Option value="M">M</Option>
+            <Option value="L">L</Option>
+            <Option value="XL">XL</Option>
+            <Option value="XXL">XXL</Option>
           </Select>
         </Filter>
         <Filter>
@@ -89,7 +93,6 @@ const ProductList = () => {
         </Filter>
       </FilterContainer>
       <Products cat={cat} filters={filters} sort={sort} />
- 
     </Container>
   );
 };
