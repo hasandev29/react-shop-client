@@ -17,7 +17,7 @@ import { AdminLayout } from "./pages/admin/AdminLayout";
 
 function App() {
   const user = useSelector((state) => state.user.currentUser);
-  const admin = user?.data?.isAdmin;
+  // const admin = user?.data?.isAdmin;
   return (
     <BrowserRouter>
       <ScrollToTop />

@@ -8,7 +8,6 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { publicRequest, userRequest } from "../../../requestMethods";
 import { useLocation, useNavigate } from "react-router-dom";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 
 export const AddProduct = () => {
   const location = useLocation();
