@@ -125,7 +125,9 @@ const Navbar = () => {
           )}
 
           <StyledLink to="/cart">
-            <MenuItem>
+            <MenuItem
+              style={{ "white-space": "nowrap", "margin-right": "3px" }}
+            >
               <ShoppingCartIcon />
               <Badge bg="secondary">{quantity}</Badge>
             </MenuItem>

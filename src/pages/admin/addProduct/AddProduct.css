@@ -93,7 +93,7 @@ form {
   margin-left: 10px;
 }
 
-@media only screen and (200px <= width <= 500px) {
+@media only screen and (200px >= width <= 500px) {
   form {
     max-width: 28rem;
   }
