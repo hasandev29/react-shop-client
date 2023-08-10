@@ -274,7 +274,7 @@ const Cart = () => {
                   </Details>
                 </ProductDetail>
                 <PriceDetail>
-                  <ProductAmountContainer>
+                  <ProductAmountContainer className="mt-4">
                     <button
                       className="btn btn-outline-danger btn-sm d-flex align-items-center"
                       onClick={() =>

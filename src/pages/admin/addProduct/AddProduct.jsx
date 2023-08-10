@@ -178,7 +178,7 @@ export const AddProduct = () => {
           </div>
 
           <div className="row">
-            <div className="col">
+            <div className="col-lg">
               <div className="form-group">
                 <div className="imgLabel mb-2">
                   <label htmlFor="Image">Image URL:</label>
@@ -196,7 +196,7 @@ export const AddProduct = () => {
                 />
               </div>
             </div>
-            <div className="col">
+            <div className="col-lg">
               <div className="form-group sizeInput">
                 <label htmlFor="size">Size</label>
 
